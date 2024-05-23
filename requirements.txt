@@ -1,4 +1,3 @@
-tensorflow[and-cuda]
 Pillow
 scipy
 ipykernel
