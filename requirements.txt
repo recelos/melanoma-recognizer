@@ -1,3 +1,5 @@
-tensorflow
+tensorflow[and-cuda]
 Pillow
 scipy
+ipykernel
+scikit-learn
