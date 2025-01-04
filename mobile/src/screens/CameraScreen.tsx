@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { StyleSheet, View, TouchableOpacity, Text, Image, Alert } from 'react-native';
-import { Camera, useCameraPermission, useCameraDevice, PhotoFile } from 'react-native-vision-camera';
+import { Camera, useCameraPermission, useCameraDevice } from 'react-native-vision-camera';
+
+const addFilePrefix = (photoPath: string) : string => photoPath.startsWith('file://') ? photoPath : `file://${photoPath}`;
 
 const CameraScreen: React.FC = () => {
   const [photoUri, setPhotoUri] = useState<string | null>(null);
@@ -17,27 +19,21 @@ const CameraScreen: React.FC = () => {
     return <Text>No access to camera</Text>;
   }
 
-  const handleCapture = async (photo: PhotoFile): Promise<void> => {
-    try {
-      setPhotoUri(photo.path);
-    } catch (error) {
-      Alert.alert('Error', `Failed to process photo: ${error instanceof Error ? error.message : String(error)}`);
-    }
-  };
-
   const takePicture = async (): Promise<void> => {
     if (!cameraRef.current) return;
     try {
       const photo = await cameraRef.current.takePhoto({
         flash: 'off',
       });
-      await handleCapture(photo);
+      setPhotoUri(addFilePrefix(photo.path));
     } catch (error) {
       Alert.alert('Error', `Failed to take photo: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
 
-  if (!device) return <Text>Loading camera...</Text>;
+  if (!device) {
+    return <Text>Loading camera...</Text>;
+  }
 
   return (
     <View style={styles.container}>
