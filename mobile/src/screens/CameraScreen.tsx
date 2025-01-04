@@ -1,11 +1,11 @@
-import React, { useState, useRef } from 'react';
-import { StyleSheet, View, TouchableOpacity, Text, Image, Alert } from 'react-native';
+import React, { useRef } from 'react';
+import { StyleSheet, View, TouchableOpacity, Text, Alert } from 'react-native';
 import { Camera, useCameraPermission, useCameraDevice } from 'react-native-vision-camera';
+import uploadPhoto from '../services/apiService';
 
 const addFilePrefix = (photoPath: string) : string => photoPath.startsWith('file://') ? photoPath : `file://${photoPath}`;
 
 const CameraScreen: React.FC = () => {
-  const [photoUri, setPhotoUri] = useState<string | null>(null);
   const cameraRef = useRef<Camera>(null);
   const device = useCameraDevice('back');
   const { hasPermission, requestPermission } = useCameraPermission();
@@ -20,12 +20,20 @@ const CameraScreen: React.FC = () => {
   }
 
   const takePicture = async (): Promise<void> => {
-    if (!cameraRef.current) return;
+    if (!cameraRef.current) {
+      Alert.alert('Error', 'Camera is not available');
+      return;
+    }
+
     try {
       const photo = await cameraRef.current.takePhoto({
         flash: 'off',
       });
-      setPhotoUri(addFilePrefix(photo.path));
+
+      const photoPath = addFilePrefix(photo.path);
+      const response = await uploadPhoto(photoPath);
+
+      Alert.alert('Response from API', response);
     } catch (error) {
       Alert.alert('Error', `Failed to take photo: ${error instanceof Error ? error.message : String(error)}`);
     }
@@ -52,9 +60,6 @@ const CameraScreen: React.FC = () => {
           <Text style={styles.buttonText}>Take Photo</Text>
         </TouchableOpacity>
       </View>
-      {photoUri && (
-        <Image source={{ uri: photoUri }} style={styles.preview} />
-      )}
     </View>
   );
 };
