@@ -2,11 +2,13 @@ import React, { useRef } from 'react';
 import { StyleSheet, View, TouchableOpacity, Text, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native'
 import { Camera, useCameraPermission, useCameraDevice, useCameraFormat } from 'react-native-vision-camera';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const addFilePrefix = (photoPath: string) : string => photoPath.startsWith('file://') ? photoPath : `file://${photoPath}`;
 
+
 const CameraScreen: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const cameraRef = useRef<Camera>(null);
   const device = useCameraDevice('back');
   const { hasPermission, requestPermission } = useCameraPermission();
@@ -36,7 +38,7 @@ const CameraScreen: React.FC = () => {
 
       const photoPath = addFilePrefix(photo.path);
 
-      navigation.navigate('ResultScreen', { photoPath });
+      navigation.navigate('ResultScreen', { photoPath: photoPath });
     } catch (error) {
       Alert.alert('Error', `Failed to take photo: ${error instanceof Error ? error.message : String(error)}`);
     }
