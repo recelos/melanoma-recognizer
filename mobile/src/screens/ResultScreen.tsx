@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, ActivityIndicator, Image, Alert, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { uploadPhoto, isApiResponse, ApiResponse } from '../services/apiService';
-import {addFile} from '../services/fileService';
+import { addFile } from '../services/fileService';
 
 const ResultScreen: React.FC<{route: any}> = ({route}) => {
   const { photoPath } = route.params;

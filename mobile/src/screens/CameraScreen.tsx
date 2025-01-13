@@ -67,6 +67,12 @@ const CameraScreen: React.FC = () => {
         >
           <Text style={styles.buttonText}>Take Photo</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('GalleryScreen')}
+        >
+          <Text style={styles.buttonText}>Check previous pictures</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -85,24 +91,21 @@ const styles = StyleSheet.create({
   controls: {
     position: 'absolute',
     bottom: 30,
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'center',
     width: '100%',
+    textAlign: 'center',
   },
   button: {
     backgroundColor: '#007AFF',
     padding: 15,
     borderRadius: 10,
+    margin: 3,
   },
   buttonText: {
     color: '#fff',
     fontSize: 16,
-  },
-  preview: {
-    width: 300,
-    height: 300,
-    marginTop: 20,
-    borderRadius: 10,
+    textAlign: 'center',
   },
 });
 
