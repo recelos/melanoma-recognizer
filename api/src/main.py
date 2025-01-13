@@ -3,7 +3,7 @@ from PIL import Image
 from fastapi import FastAPI, UploadFile, HTTPException
 import torch
 import torchvision.transforms as transforms
-from models.cnn.CNN import CNN
+from CNN import CNN
 
 transform = transforms.Compose([
     transforms.Resize((224, 224)),
@@ -11,7 +11,7 @@ transform = transforms.Compose([
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 ])
 
-MODEL_PATH = 'models/cnn/cnn.pt'
+MODEL_PATH = '/api/src/cnn.pt'
 
 model = CNN()
 model.load_state_dict(torch.load(MODEL_PATH, map_location=torch.device('cpu')))
@@ -37,4 +37,5 @@ async def upload_file(file: UploadFile):
     probabilities = torch.nn.functional.softmax(result, dim=1)
     probabilities = probabilities.squeeze().tolist()
 
-    return 'benign' if probabilities[0] > probabilities[1] else 'malignant'
+    result = 'benign' if probabilities[0] > probabilities[1] else 'malignant'
+    return {'result' : result }
