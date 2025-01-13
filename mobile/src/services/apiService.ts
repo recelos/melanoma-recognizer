@@ -4,6 +4,10 @@ export interface ApiResponse {
   result: string;
 }
 
+export function isApiResponse(object: any): object is ApiResponse {
+  return 'result' in object;
+}
+
 export async function uploadPhoto(photoPath: string) : Promise<ApiResponse | string> {
   const endpoint = 'http://10.0.2.2:8000/image';
 
@@ -22,8 +26,4 @@ export async function uploadPhoto(photoPath: string) : Promise<ApiResponse | str
   });
 
   return response.data;
-}
-
-export function isApiResponse(object: any): object is ApiResponse {
-  return 'result' in object;
 }
