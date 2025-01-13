@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ActivityIndicator, Image, Alert, StyleSheet } from 'react-native';
-import { uploadPhoto, isApiResponse, ApiResponse } from '../services/apiService';
 import { useNavigation } from '@react-navigation/native';
+import { uploadPhoto, isApiResponse, ApiResponse } from '../services/apiService';
+import {addFile} from '../services/fileService';
 
 const ResultScreen: React.FC<{route: any}> = ({route}) => {
   const { photoPath } = route.params;
@@ -13,9 +14,10 @@ const ResultScreen: React.FC<{route: any}> = ({route}) => {
     const fetchApiResponse = async () => {
       try {
         const apiResponse: ApiResponse | string = await uploadPhoto(photoPath);
+
         if (isApiResponse(apiResponse)) {
-          const result = apiResponse.result;
-          setResponse(result);
+          setResponse(apiResponse.result);
+          await addFile(photoPath);
         }
       } catch (error) {
         Alert.alert('Error', `${error instanceof Error ? error.message : String(error)}`);
