@@ -30,11 +30,13 @@ const ResultScreen: React.FC<{route: any}> = ({route}) => {
 
   return (
     <View style={styles.container}>
-      <Image source={{ uri: photoPath }} style={styles.image} />
       {loading ? (
         <ActivityIndicator size="large" color="#007AFF" style={styles.loadingIndicator} />
       ) : (
-        <Text style={styles.apiResponse}>{response}</Text>
+        <>
+          <Image source={{ uri: photoPath }} style={styles.image} />
+          <Text style={styles.apiResponse}>{response}</Text>
+        </>
       )}
     </View>
   );
