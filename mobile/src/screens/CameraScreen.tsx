@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { StyleSheet, View, TouchableOpacity, Text, Alert } from 'react-native';
-import { Camera, useCameraPermission, useCameraDevice } from 'react-native-vision-camera';
-import uploadPhoto from '../services/apiService';
+import { Camera, useCameraPermission, useCameraDevice, useCameraFormat } from 'react-native-vision-camera';
+import { uploadPhoto, isApiResponse, ApiResponse } from '../services/apiService';
 
 const addFilePrefix = (photoPath: string) : string => photoPath.startsWith('file://') ? photoPath : `file://${photoPath}`;
 
@@ -9,6 +9,9 @@ const CameraScreen: React.FC = () => {
   const cameraRef = useRef<Camera>(null);
   const device = useCameraDevice('back');
   const { hasPermission, requestPermission } = useCameraPermission();
+  const format = useCameraFormat(device, [
+    { photoResolution: { width: 300, height: 300 } },
+  ]);
 
   if (!hasPermission) {
     requestPermission();
@@ -31,9 +34,12 @@ const CameraScreen: React.FC = () => {
       });
 
       const photoPath = addFilePrefix(photo.path);
-      const response = await uploadPhoto(photoPath);
 
-      Alert.alert('Response from API', response);
+      const response : ApiResponse | string = await uploadPhoto(photoPath);
+      if (isApiResponse(response)) {
+        console.log(response.result);
+        Alert.alert('Response from API', response?.result);
+      }
     } catch (error) {
       Alert.alert('Error', `Failed to take photo: ${error instanceof Error ? error.message : String(error)}`);
     }
@@ -45,13 +51,16 @@ const CameraScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Camera
-        style={StyleSheet.absoluteFill}
-        device={device}
-        isActive={true}
-        photo={true}
-        ref={cameraRef}
-      />
+      <View style={styles.cameraContainer}>
+        <Camera
+          style={StyleSheet.absoluteFill}
+          device={device}
+          isActive={true}
+          photo={true}
+          ref={cameraRef}
+          format={format}
+          />
+      </View>
       <View style={styles.controls}>
         <TouchableOpacity
           style={styles.button}
@@ -69,6 +78,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  cameraContainer: {
+    width: 300,
+    height: 300,
   },
   controls: {
     position: 'absolute',

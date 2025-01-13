@@ -1,6 +1,10 @@
 import axios from 'axios';
 
-export default async function uploadPhoto(photoPath: string) : Promise<string> {
+export interface ApiResponse {
+  result: string;
+}
+
+export async function uploadPhoto(photoPath: string) : Promise<ApiResponse | string> {
   const endpoint = 'http://10.0.2.2:8000/image';
 
   const formData = new FormData();
@@ -14,7 +18,12 @@ export default async function uploadPhoto(photoPath: string) : Promise<string> {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
+    timeout: 2000,
   });
 
   return response.data;
+}
+
+export function isApiResponse(object: any): object is ApiResponse {
+  return 'result' in object;
 }
