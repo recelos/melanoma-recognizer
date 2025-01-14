@@ -11,6 +11,17 @@ const ResultScreen: React.FC<{route: any}> = ({route}) => {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    navigation.getParent()?.setOptions({
+      headerShown:false,
+    });
+    return () => {
+      navigation.getParent()?.setOptions({
+        headerShown:true,
+      });
+    };
+  }, [navigation]);
+
+  useEffect(() => {
     const fetchApiResponse = async () => {
       try {
         const apiResponse: ApiResponse | string = await uploadPhoto(photoPath);
