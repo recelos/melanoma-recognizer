@@ -38,7 +38,7 @@ const CameraScreen: React.FC = () => {
 
       const photoPath = addFilePrefix(photo.path);
 
-      navigation.navigate('ResultScreen', { photoPath: photoPath });
+      navigation.navigate('Result', { photoPath: photoPath });
     } catch (error) {
       Alert.alert('Error', `Failed to take photo: ${error instanceof Error ? error.message : String(error)}`);
     }
@@ -66,12 +66,6 @@ const CameraScreen: React.FC = () => {
           onPress={takePicture}
         >
           <Text style={styles.buttonText}>Take Photo</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('GalleryScreen')}
-        >
-          <Text style={styles.buttonText}>Check previous pictures</Text>
         </TouchableOpacity>
       </View>
     </View>

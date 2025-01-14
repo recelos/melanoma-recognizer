@@ -1,10 +1,10 @@
 import React from 'react';
 import { enableScreens } from 'react-native-screens';
-import Stack from './Stack';
+import Root from './navigation/Root';
 
 enableScreens(true);
 function App(): React.JSX.Element {
-  return <Stack />;
+  return <Root />;
 }
 
 export default App;

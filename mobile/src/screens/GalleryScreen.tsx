@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, FlatList, Image, StyleSheet, Text, Alert } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { fetchFiles } from '../services/fileService';
 
 const GalleryScreen: React.FC = () => {
   const [photos, setPhotos] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    const fetchPhotos = async () => {
-      try {
-        const photoPaths = await fetchFiles();
-        console.log(photoPaths)
-        if (!photoPaths) {
-          Alert.alert('Info', 'No photos found in the gallery.');
-          setLoading(false);
-          return;
-        }
-        setPhotos(photoPaths);
+
+  const fetchPhotos = async () => {
+    try {
+      const photoPaths = await fetchFiles();
+      if (!photoPaths) {
+        Alert.alert('Info', 'No photos found in the gallery.');
+        setLoading(false);
+        return;
+      }
+      setPhotos(photoPaths);
       } catch (error) {
         Alert.alert('Error', `Failed to load photos: ${error instanceof Error ? error.message : String(error)}`);
       } finally {
@@ -24,8 +24,11 @@ const GalleryScreen: React.FC = () => {
       }
     };
 
-    fetchPhotos();
-  }, []);
+    useFocusEffect(useCallback(() => {
+        fetchPhotos();
+      }, [])
+    );
+
 
   const renderPhoto = ({ item }: { item: string }) => (
     <Image source={{ uri: item }} style={styles.photo} />
