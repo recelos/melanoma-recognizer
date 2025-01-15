@@ -49,6 +49,7 @@ const CameraScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.infoText}>Please focus the camera on the birthmark</Text>
       <View style={styles.cameraContainer}>
         <Camera
           style={StyleSheet.absoluteFill}
@@ -92,13 +93,19 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#007AFF',
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 3,
     margin: 3,
   },
   buttonText: {
     color: '#fff',
     fontSize: 16,
     textAlign: 'center',
+  },
+  infoText: {
+    color: '#000',
+    padding: 10,
+    margin: 10,
+    fontSize:16,
   },
 });
 

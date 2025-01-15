@@ -10,21 +10,19 @@ const AuthDrawerSection: React.FC<DrawerContentComponentProps> = (props) => {
 
   return (
     <DrawerContentScrollView {...props}>
-
       <View style={styles.buttonsContainer}>
         <DrawerItemList {...props} />
       </View>
-
-        <View style={styles.footerContainer}>
-        {user ? (
-          <>
-            <Text style={styles.userText}>Logged in as: {user.email}</Text>
-            <Button title="Log Out" onPress={logout} />
-          </>
-          ) : (
-            <Button title="Log In" onPress={() => navigation.navigate('Login')} />
-          )}
-        </View>
+      <View style={styles.footerContainer}>
+      {user ? (
+        <>
+          <Text style={styles.userText}>Logged in as: {user.email}</Text>
+          <Button title="Log Out" onPress={logout} />
+        </>
+        ) : (
+          <Button title="Log In" onPress={() => navigation.navigate('Login')} />
+        )}
+      </View>
   </DrawerContentScrollView>
   );
 };
