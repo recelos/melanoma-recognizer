@@ -6,7 +6,6 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const addFilePrefix = (photoPath: string) : string => photoPath.startsWith('file://') ? photoPath : `file://${photoPath}`;
 
-
 const CameraScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const cameraRef = useRef<Camera>(null);
