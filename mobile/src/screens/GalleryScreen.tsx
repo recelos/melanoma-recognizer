@@ -1,18 +1,18 @@
 import React, { useState, useCallback } from 'react';
-import { View, FlatList, Image, StyleSheet, Text, Alert } from 'react-native';
+import { View, FlatList, Image, StyleSheet, Text, Alert, ActivityIndicator } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { fetchFiles } from '../services/fileService';
+import { useAuth } from '../providers/AuthProvider';
 
 const GalleryScreen: React.FC = () => {
   const [photos, setPhotos] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-
+  const { user } = useAuth();
 
   const fetchPhotos = async () => {
     try {
       const photoPaths = await fetchFiles();
       if (!photoPaths) {
-        Alert.alert('Info', 'No photos found in the gallery.');
         setLoading(false);
         return;
       }
@@ -24,11 +24,10 @@ const GalleryScreen: React.FC = () => {
       }
     };
 
-    useFocusEffect(useCallback(() => {
-        fetchPhotos();
-      }, [])
-    );
-
+  useFocusEffect(useCallback(() => {
+      fetchPhotos();
+    }, [])
+  );
 
   const renderPhoto = ({ item }: { item: string }) => (
     <Image source={{ uri: item }} style={styles.photo} />
@@ -37,8 +36,8 @@ const GalleryScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       {loading ? (
-        <Text style={styles.loadingText}>Loading photos...</Text>
-      ) : photos.length > 0 ? (
+        <ActivityIndicator style={styles.loadingIndicator} />
+      ) : photos.length > 0 && user ? (
         <FlatList
           data={photos}
           renderItem={renderPhoto}
@@ -76,6 +75,9 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     color: '#999',
+  },
+  loadingIndicator: {
+    marginTop: 20,
   },
 });
 
