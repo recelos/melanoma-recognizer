@@ -14,6 +14,7 @@ const LoginScreen: React.FC = () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       Alert.alert('Success', 'You are now logged in!');
+      navigation.navigate('CameraStack');
     } catch (error) {
       Alert.alert('Login failed', `${error instanceof Error ? error.message : String(error)}`);
     }
