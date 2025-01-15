@@ -22,8 +22,8 @@ model.eval()
 app = FastAPI()
 
 @app.post("/image")
-async def upload_file(file: UploadFile):
-    if file.content_type is None:
+async def upload_file(file: UploadFile | None = None):
+    if not file:
         raise HTTPException(status_code=400, detail='No file uploaded')
 
     if file.content_type != 'image/jpeg':
