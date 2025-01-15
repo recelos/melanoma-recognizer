@@ -1,4 +1,5 @@
 import io
+import os
 from PIL import Image
 from fastapi import FastAPI, UploadFile, HTTPException
 import torch
@@ -11,7 +12,8 @@ transform = transforms.Compose([
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 ])
 
-MODEL_PATH = '/api/src/cnn.pt'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, 'cnn.pt')
 
 model = CNN()
 model.load_state_dict(torch.load(MODEL_PATH, map_location=torch.device('cpu')))
