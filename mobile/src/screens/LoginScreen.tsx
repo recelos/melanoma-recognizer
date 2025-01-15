@@ -1,12 +1,19 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, TextInput, Button, Alert } from 'react-native';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase/config'
 
 const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
-    Alert.alert('Login');
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      Alert.alert('Success', 'You are now logged in!');
+    } catch (error) {
+      Alert.alert('Login failed', `${error instanceof Error ? error.message : String(error)}`);
+    }
   };
 
   return (
