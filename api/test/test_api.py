@@ -4,6 +4,14 @@ from main import app
 
 client = TestClient(app)
 
+def test_upload_no_file_should_return_400_bad_request():
+    # Act
+    response = client.post("/image")
+
+    # Assert
+    assert response.status_code == 400
+    assert response.json() == {"detail": "No file uploaded"}
+
 def test_invalid_file_type_should_return_400_bad_request():
     # Arrange
     invalid_file = io.BytesIO(b"This is a text file")
@@ -46,11 +54,3 @@ def test_upload_benign_should_return_benign():
     assert response.status_code == 200
     assert "result" in response.json()
     assert response.json()["result"] == "benign"
-
-def test_upload_no_file_should_return_400_bad_request():
-    # Act
-    response = client.post("/image")
-
-    # Assert
-    assert response.status_code == 400
-    assert response.json() == {"detail": "No file uploaded"}
