@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, TextInput, Button, Alert } from 'react-native';
+import { StyleSheet, View, TextInput, Button, Alert, TouchableOpacity, Text } from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase/config';
+import { useNavigation } from '@react-navigation/native';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
 
 const LoginScreen: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const navigation = useNavigation<DrawerNavigationProp<any>>();
 
-  const handleLogin = async () => {
+  const handleLogin = async () : Promise<void> => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       Alert.alert('Success', 'You are now logged in!');
@@ -34,6 +37,9 @@ const LoginScreen: React.FC = () => {
         secureTextEntry
       />
       <Button title="Log In" onPress={handleLogin} />
+      <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+        <Text style={styles.registerLink}>Don't have an account? Register</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -50,6 +56,11 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     marginBottom: 15,
+  },
+  registerLink: {
+    marginTop: 15,
+    color: '#007AFF',
+    textAlign: 'center',
   },
 });
 
