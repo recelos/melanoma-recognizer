@@ -12,5 +12,6 @@ CREATE TABLE folders (
 CREATE TABLE photos (
     id SERIAL PRIMARY KEY,
     classification_result TEXT NOT NULL,
+    url TEXT NOT NULL,
     folder_id INTEGER NOT NULL REFERENCES folders(id) ON DELETE CASCADE
 );

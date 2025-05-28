@@ -1,36 +1,49 @@
 import React, { useState, useCallback } from 'react';
 import { View, FlatList, Image, StyleSheet, Text, Alert, ActivityIndicator } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
-import { fetchFiles } from '../services/fileService';
+import { useFocusEffect, useRoute, RouteProp } from '@react-navigation/native';
+import { fetchPhotosByFolder } from '../services/apiService';
 import { useAuth } from '../providers/AuthProvider';
+import { GalleryStackParamList } from '../types/types';
+
+type Photo = {
+  id: number;
+  url: string;
+  classification_result: string;
+};
+
+type GalleryRouteProp = RouteProp<GalleryStackParamList, 'Gallery'>;
 
 const GalleryScreen: React.FC = () => {
-  const [photos, setPhotos] = useState<string[]>([]);
+  const [photos, setPhotos] = useState<Photo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const { user } = useAuth();
+  const route = useRoute<GalleryRouteProp>();
+  const { folderId } = route.params;
 
   const fetchPhotos = async () => {
-    try {
-      const photoPaths = await fetchFiles();
-      if (!photoPaths) {
-        setLoading(false);
-        return;
-      }
-      setPhotos(photoPaths);
-      } catch (error) {
-        Alert.alert('Error', `Failed to load photos: ${error instanceof Error ? error.message : String(error)}`);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (!folderId) return;
 
-  useFocusEffect(useCallback(() => {
+    try {
+      const response = await fetchPhotosByFolder(folderId);
+      setPhotos(response);
+    } catch (error) {
+      Alert.alert('Błąd', `Nie udało się pobrać zdjęć: ${error instanceof Error ? error.message : String(error)}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
       fetchPhotos();
-    }, [])
+    }, [folderId])
   );
 
-  const renderPhoto = ({ item }: { item: string }) => (
-    <Image source={{ uri: item }} style={styles.photo} />
+  const renderPhoto = ({ item }: { item: Photo }) => (
+    <View style={styles.photoContainer}>
+      <Image source={{ uri: item.url }} style={styles.photo} />
+      <Text style={styles.label}>{item.classification_result}</Text>
+    </View>
   );
 
   return (
@@ -41,12 +54,12 @@ const GalleryScreen: React.FC = () => {
         <FlatList
           data={photos}
           renderItem={renderPhoto}
-          keyExtractor={(item, index) => index.toString()}
-          numColumns={3}
+          keyExtractor={(item) => item.id.toString()}
+          numColumns={2}
           contentContainerStyle={styles.gallery}
         />
       ) : (
-        <Text style={styles.emptyText}>No photos available.</Text>
+        <Text style={styles.emptyText}>Brak zdjęć w tym folderze.</Text>
       )}
     </View>
   );
@@ -56,24 +69,29 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   gallery: {
     padding: 10,
+    alignItems: 'center',
+  },
+  photoContainer: {
+    margin: 8,
+    alignItems: 'center',
   },
   photo: {
-    width: 100,
-    height: 100,
-    margin: 5,
-    borderRadius: 5,
+    width: 150,
+    height: 150,
+    borderRadius: 8,
   },
-  loadingText: {
-    fontSize: 16,
-    color: '#007AFF',
+  label: {
+    marginTop: 6,
+    fontSize: 14,
+    color: '#333',
   },
   emptyText: {
+    marginTop: 20,
     fontSize: 16,
+    textAlign: 'center',
     color: '#999',
   },
   loadingIndicator: {

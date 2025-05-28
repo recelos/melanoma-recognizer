@@ -4,6 +4,8 @@ import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, StyleSheet }
 import { useNavigation } from '@react-navigation/native';
 import { getFolders } from '../services/apiService';
 import { useAuth } from '../providers/AuthProvider';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { GalleryStackParamList } from '../types/types';
 
 type Folder = {
   id: number;
@@ -15,7 +17,7 @@ const FolderListScreen = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<GalleryStackParamList, 'Folders'>>();
   const { user } = useAuth();
 
 const fetchFolders = async () => {
@@ -40,11 +42,11 @@ const fetchFolders = async () => {
 
 useFocusEffect(useCallback(() => {
   fetchFolders();
-  },[user])
+  }, [user])
 );
 
   const handleFolderPress = (folderId: number) => {
-    navigation.navigate('PhotosScreen', { folderId });
+    navigation.navigate('Gallery', { folderId });
   };
 
   if (loading) {

@@ -15,3 +15,15 @@ class Folder(Base):
     name = Column(String, nullable=False)
     user_id = Column(String, ForeignKey('users.id', ondelete='CASCADE'))
     user = relationship("User", back_populates="folders")
+    photos = relationship("Photo", back_populates="folder", cascade="all, delete-orphan")
+
+
+class Photo(Base):
+    __tablename__ = 'photos'
+
+    id = Column(Integer, primary_key=True, index=True)
+    classification_result = Column(String, nullable=False)
+    folder_id = Column(Integer, ForeignKey('folders.id', ondelete="CASCADE"), nullable=False)
+    url = Column(String, nullable=False)
+
+    folder = relationship("Folder", back_populates="photos")

@@ -7,8 +7,9 @@ import torchvision.transforms as transforms
 from CNN import CNN
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.future import select
-from schemas import FolderSchema
-from models import Base, Folder
+from schemas import FolderSchema, PhotoSchema
+from models import Folder, Photo
+from fastapi.staticfiles import StaticFiles
 
 transform = transforms.Compose([
     transforms.Resize((224, 224)),
@@ -28,6 +29,8 @@ model.load_state_dict(torch.load(MODEL_PATH, map_location=torch.device('cpu')))
 model.eval()
 
 app = FastAPI()
+#TODO remove temporary static files when cloud is ready
+app.mount("/data", StaticFiles(directory=os.path.join(BASE_DIR, "data")), name="data")
 
 async def get_db():
     async with async_session() as session:
@@ -61,3 +64,22 @@ async def get_user_folders(user_id: str, db: AsyncSession = Depends(get_db)):
     if not folders:
         raise HTTPException(status_code=404, detail="No folders found for this user")
     return folders
+
+@app.get("/folders/{folder_id}/photos", response_model=list[PhotoSchema])
+async def get_photos_for_folder(folder_id: int, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(Photo).where(Photo.folder_id == folder_id))
+    photos = result.scalars().all()
+
+    if not photos:
+        raise HTTPException(status_code=404, detail="Brak zdjęć w tym folderze")
+
+    #TODO change base url when cloud is ready
+    base_url = "http://10.0.2.2:8000/data"
+    return [
+        PhotoSchema(
+            id=photo.id,
+            classification_result=photo.classification_result,
+            url=f"{base_url}/{photo.url}.jpg"
+        )
+        for photo in photos
+    ]

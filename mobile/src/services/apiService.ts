@@ -34,3 +34,9 @@ export async function getFolders(userId: string) : Promise<any> {
 
   return response;
 }
+
+export const fetchPhotosByFolder = async (folderId: number) => {
+  const endpoint = `http://10.0.2.2:8000/folders/${folderId}/photos`;
+  const response = await axios.get(endpoint);
+  return response.data;
+};
