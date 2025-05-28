@@ -27,3 +27,10 @@ export async function uploadPhoto(photoPath: string) : Promise<ApiResponse | str
 
   return response.data;
 }
+
+export async function getFolders(userId: string) : Promise<any> {
+  const endpoint = `http://10.0.2.2:8000/users/${userId}/folders`;
+  const response = axios.get(endpoint);
+
+  return response;
+}
