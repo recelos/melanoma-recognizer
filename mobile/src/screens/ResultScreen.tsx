@@ -48,7 +48,7 @@ const ResultScreen: React.FC<{route: any}> = ({route}) => {
       ) : (
         <>
           <Image source={{ uri: photoPath }} style={styles.image} />
-          <Text style={styles.apiResponse}>Results of the classification: {response}</Text>
+          <Text style={styles.apiResponse}>Result of the classification: {response}</Text>
         </>
       )}
     </View>
