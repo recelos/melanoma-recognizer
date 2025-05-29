@@ -40,3 +40,23 @@ export const fetchPhotosByFolder = async (folderId: number) => {
   const response = await axios.get(endpoint);
   return response.data;
 };
+
+export const saveFile = async (fileUri: string, folderId: number, classificationResult: string) => {
+  const endpoint = 'http://10.0.2.2:8000/save';
+  const fileBlob = {
+    uri: fileUri,
+    type: 'image/jpeg',
+    name: 'image.jpg',
+  };
+
+  const formData = new FormData();
+  formData.append('file', fileBlob as any);
+  formData.append('folder_id', String(folderId));
+  formData.append('classification_result', classificationResult);
+
+  const response = await axios.post(endpoint, formData, {headers: {
+    'Content-Type': 'multipart/form-data',
+  }});
+
+  return response.data;
+};
