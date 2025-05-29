@@ -1,7 +1,8 @@
 import io
 import os
 from PIL import Image
-from fastapi import FastAPI, UploadFile, HTTPException, Depends
+from fastapi import FastAPI, UploadFile, HTTPException, Depends, Form
+from fastapi.responses import JSONResponse
 import torch
 import torchvision.transforms as transforms
 from CNN import CNN
@@ -10,6 +11,7 @@ from sqlalchemy.future import select
 from schemas import FolderSchema, PhotoSchema
 from models import Folder, Photo
 from fastapi.staticfiles import StaticFiles
+import uuid
 
 transform = transforms.Compose([
     transforms.Resize((224, 224)),
@@ -79,7 +81,47 @@ async def get_photos_for_folder(folder_id: int, db: AsyncSession = Depends(get_d
         PhotoSchema(
             id=photo.id,
             classification_result=photo.classification_result,
-            url=f"{base_url}/{photo.url}.jpg"
+            url=f"{base_url}/{photo.url}"
         )
         for photo in photos
     ]
+
+@app.post('/save')
+async def save_file(
+    file: UploadFile,
+    folder_id: int = Form(...),
+    classification_result: str = Form(...),
+    db: AsyncSession = Depends(get_db)
+):
+    if file.content_type != 'image/jpeg':
+        raise HTTPException(status_code=400, detail='Plik musi być typu image/jpeg')
+
+    result = await db.execute(select(Folder).where(Folder.id == folder_id))
+    folder = result.scalars().first()
+    if not folder:
+        raise HTTPException(status_code=404, detail="Folder nie istnieje")
+
+    unique_filename = f"{uuid.uuid4().hex}.jpg"
+    data_dir = os.path.join(BASE_DIR, "data")
+    os.makedirs(data_dir, exist_ok=True)
+    file_path = os.path.join(data_dir, unique_filename)
+
+    await file.seek(0)
+    print(file_path)
+    with open(file_path, "wb") as f:
+        f.write(await file.read())
+
+    photo = Photo(
+        classification_result=classification_result,
+        folder_id=folder_id,
+        url=unique_filename
+    )
+    db.add(photo)
+    await db.commit()
+    await db.refresh(photo)
+
+    return JSONResponse({
+        "id": photo.id,
+        "classification_result": classification_result,
+        "url": unique_filename
+    })
