@@ -4,6 +4,7 @@ import { auth } from '../firebase/config';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
+import { createNewUser } from '../services/apiService';
 
 const RegisterScreen: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -12,7 +13,9 @@ const RegisterScreen: React.FC = () => {
 
   const handleRegister = async () : Promise<void> => {
     try {
-      await createUserWithEmailAndPassword(auth ,email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth ,email, password);
+      await createNewUser(userCredential.user.uid, email);
+
       Alert.alert('Success', 'Account created successfully!');
       navigation.navigate('CameraStack');
     } catch (error) {

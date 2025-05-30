@@ -102,14 +102,6 @@ const FolderListScreen = () => {
     );
   }
 
-  if (folders.length === 0) {
-    return (
-      <View style={styles.centered}>
-        <Text style={styles.message}>No benigns monitored.</Text>
-      </View>
-    );
-  }
-
   return (
     <>
       <FlatList

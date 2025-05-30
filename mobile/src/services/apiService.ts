@@ -66,7 +66,18 @@ export const createNewFolder = async(name: string, userId: string) =>{
   const formData = new FormData();
   formData.append('name', name);
   formData.append('user_id', userId);
-  const response = await axios.post(endpoint, formData, {headers: {
+  const response = await axios.post(endpoint, formData, { headers: {
+    'Content-Type': 'multipart/form-data',
+  }});
+  return response.data;
+};
+
+export const createNewUser = async(userId: string, username: string) => {
+  const endpoint = 'http://10.0.2.2:8000/users';
+  const formData = new FormData();
+  formData.append('user_id', userId);
+  formData.append('username', username);
+  const response = await axios.post(endpoint, formData, { headers: {
     'Content-Type': 'multipart/form-data',
   }});
   return response.data;

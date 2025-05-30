@@ -100,7 +100,6 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   caption: {
-    marginTop: 10,
     color: 'white',
     fontSize: 16,
     textAlign: 'center',

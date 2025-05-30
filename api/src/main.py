@@ -9,7 +9,7 @@ from CNN import CNN
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.future import select
 from schemas import FolderSchema, PhotoSchema
-from models import Folder, Photo
+from models import Folder, Photo, User
 from fastapi.staticfiles import StaticFiles
 import uuid
 from s3_service import generate_presigned_url, save_file_to_bucket
@@ -57,6 +57,18 @@ async def upload_file(file: UploadFile | None = None):
 
     result = 'benign' if probabilities[0] > probabilities[1] else 'malignant'
     return {'result' : result }
+
+@app.post("/users")
+async def add_user(user_id: str = Form(),
+                   username: str = Form(),
+                   db: AsyncSession = Depends(get_db)
+):
+    new_user = User(id = user_id, username = username)
+    db.add(new_user)
+    await db.commit()
+    await db.refresh(new_user)
+
+    return { "user_id": new_user.id, "username": new_user.username }
 
 @app.get("/users/{user_id}/folders", response_model=list[FolderSchema])
 async def get_user_folders(user_id: str, db: AsyncSession = Depends(get_db)):
