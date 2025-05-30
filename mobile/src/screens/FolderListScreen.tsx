@@ -89,7 +89,7 @@ const FolderListScreen = () => {
   if (loading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" testID='ActivityIndicator'/>
       </View>
     );
   }
