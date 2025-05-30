@@ -23,16 +23,20 @@ const FolderListScreen = () => {
 const fetchFolders = async () => {
   setLoading(true);
   setError(null);
+  if (!user){
+    setError('Log in to access benigns');
+    setLoading(false);
+    return;
+  }
 
   try {
     const response = await getFolders(user!.uid);
-    console.log(response.data)
     setFolders(response.data);
   } catch (err: any) {
     if (err.response?.status === 404) {
       setFolders([]);
     } else {
-      setError("Błąd podczas pobierania folderów.");
+      setError('Issue during loading folders');
     }
   } finally {
     setLoading(false);
@@ -68,7 +72,7 @@ useFocusEffect(useCallback(() => {
   if (folders.length === 0) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.message}>Brak folderów</Text>
+        <Text style={styles.message}>No benigns monitored.</Text>
       </View>
     );
   }

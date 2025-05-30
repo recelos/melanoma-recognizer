@@ -74,7 +74,7 @@ const GalleryScreen: React.FC = () => {
           contentContainerStyle={styles.gallery}
         />
       ) : (
-        <Text style={styles.emptyText}>Brak zdjęć w tym folderze.</Text>
+        <Text style={styles.emptyText}>No photos assigned to this melanoma.</Text>
       )}
     </View>
   );

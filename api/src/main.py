@@ -12,7 +12,8 @@ from schemas import FolderSchema, PhotoSchema
 from models import Folder, Photo
 from fastapi.staticfiles import StaticFiles
 import uuid
-from s3_service import generate_presigned_url
+from s3_service import generate_presigned_url, save_file_to_bucket
+from botocore.exceptions import BotoCoreError, ClientError
 
 transform = transforms.Compose([
     transforms.Resize((224, 224)),
@@ -20,7 +21,7 @@ transform = transforms.Compose([
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 ])
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://user:password@localhost:5432/photosdb")
+DATABASE_URL = os.getenv("DATABASE_URL")
 engine = create_async_engine(DATABASE_URL, echo=True)
 async_session = async_sessionmaker(engine, expire_on_commit=False)
 
@@ -32,9 +33,6 @@ model.load_state_dict(torch.load(MODEL_PATH, map_location=torch.device('cpu')))
 model.eval()
 
 app = FastAPI()
-#TODO remove temporary static files when cloud is ready
-app.mount("/data", StaticFiles(directory=os.path.join(BASE_DIR, "data")), name="data")
-
 async def get_db():
     async with async_session() as session:
         yield session
@@ -73,7 +71,7 @@ async def get_photos_for_folder(folder_id: int, db: AsyncSession = Depends(get_d
     result = await db.execute(select(Photo).where(Photo.folder_id == folder_id))
     photos = result.scalars().all()
     if not photos:
-        raise HTTPException(status_code=404, detail="Brak zdjęć w tym folderze")
+        raise HTTPException(status_code=404, detail="No images in this folder")
 
     return [
         PhotoSchema(
@@ -92,22 +90,20 @@ async def save_file(
     db: AsyncSession = Depends(get_db)
 ):
     if file.content_type != 'image/jpeg':
-        raise HTTPException(status_code=400, detail='Plik musi być typu image/jpeg')
+        raise HTTPException(status_code=400, detail='File must be of image/jpeg type')
 
     result = await db.execute(select(Folder).where(Folder.id == folder_id))
     folder = result.scalars().first()
     if not folder:
-        raise HTTPException(status_code=404, detail="Folder nie istnieje")
+        raise HTTPException(status_code=404, detail="Folder does not exist")
 
     unique_filename = f"{uuid.uuid4().hex}.jpg"
-    data_dir = os.path.join(BASE_DIR, "data")
-    os.makedirs(data_dir, exist_ok=True)
-    file_path = os.path.join(data_dir, unique_filename)
 
-    await file.seek(0)
-    print(file_path)
-    with open(file_path, "wb") as f:
-        f.write(await file.read())
+    try:
+        file_content = await file.read()
+        save_file_to_bucket(file_content, unique_filename)
+    except (BotoCoreError, ClientError) as e:
+        raise HTTPException(status_code=500, detail=f"Error during uploading to S3: {str(e)}")
 
     photo = Photo(
         classification_result=classification_result,

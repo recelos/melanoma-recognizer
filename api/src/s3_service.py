@@ -1,6 +1,8 @@
 import boto3
 from botocore.exceptions import ClientError
+from botocore.config import Config
 import os
+from io import BytesIO
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -17,6 +19,7 @@ s3_client = boto3.client(
     aws_access_key_id=S3_ACCESS_KEY,
     aws_secret_access_key=S3_SECRET_KEY,
     region_name=S3_REGION,
+    config=Config(request_checksum_calculation="when_required", response_checksum_validation="when_required")
 )
 
 def generate_presigned_url(object_name: str, expiration: int = 3600) -> str:
@@ -30,3 +33,11 @@ def generate_presigned_url(object_name: str, expiration: int = 3600) -> str:
         print(f"Error generating URL: {e}")
         return ""
     return response
+
+def save_file_to_bucket(file_content: bytes, unique_filename: str):
+    s3_client.upload_fileobj(
+        Fileobj=BytesIO(file_content),
+        Bucket=S3_BUCKET_NAME,
+        Key=unique_filename,
+        ExtraArgs={'ContentType': 'image/jpeg'}
+    )

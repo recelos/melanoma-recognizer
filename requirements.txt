@@ -13,3 +13,4 @@ sqlalchemy
 asyncpg
 boto3
 python-dotenv
+boto3_extensions
