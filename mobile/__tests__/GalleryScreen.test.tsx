@@ -23,7 +23,7 @@ jest.mock('@react-navigation/native', () => {
   };
 });
 
-//Tests
+// Tests
 describe('GalleryScreen', () => {
   const mockUser = { uid: '123' };
 

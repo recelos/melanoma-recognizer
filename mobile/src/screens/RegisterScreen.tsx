@@ -25,7 +25,7 @@ const RegisterScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Register</Text>
+      <Text testID="register-title" style={styles.title}>Register</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -40,7 +40,7 @@ const RegisterScreen: React.FC = () => {
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Button title="Register" onPress={handleRegister} />
+      <Button testID="register-button" title="Register" onPress={handleRegister} />
     </View>
   );
 };

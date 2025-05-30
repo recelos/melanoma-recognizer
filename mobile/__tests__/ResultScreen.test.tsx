@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, waitFor, fireEvent, act } from '@testing-library/react-native';
+import { render, waitFor, fireEvent } from '@testing-library/react-native';
 import ResultScreen from '../src/screens/ResultScreen';
 import { useAuth } from '../src/providers/AuthProvider';
 import * as apiService from '../src/services/apiService';
@@ -18,6 +18,7 @@ jest.mock('../src/services/apiService', () => ({
   saveFile: jest.fn(),
   isApiResponse: jest.fn(() => true), // <--- kluczowe
 }));
+
 jest.mock('@react-navigation/native', () => {
   const actualNav = jest.requireActual('@react-navigation/native');
   return {
