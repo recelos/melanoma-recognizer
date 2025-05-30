@@ -66,7 +66,7 @@ const GalleryScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       {loading ? (
-        <ActivityIndicator style={styles.loadingIndicator} />
+        <ActivityIndicator testID="ActivityIndicator" style={styles.loadingIndicator} />
       ) : photos.length > 0 && user ? (
         <FlatList
           data={photos}
