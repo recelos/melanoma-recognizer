@@ -35,7 +35,7 @@ const ResultScreen: React.FC<{route: any}> = ({route}) => {
           setResponse(apiResponse.result);
         }
       } catch (error) {
-        Alert.alert('Błąd', `Nie udało się przesłać zdjęcia: ${error}`);
+        Alert.alert('Error', `Unable to upload picture: ${error}`);
         navigation.pop();
       } finally {
         setLoading(false);
@@ -81,7 +81,7 @@ const ResultScreen: React.FC<{route: any}> = ({route}) => {
  return (
     <View style={styles.container}>
       {loading ? (
-        <ActivityIndicator size="large" color="#007AFF" style={styles.loadingIndicator} />
+        <ActivityIndicator testID="ActivityIndicator" size="large" color="#007AFF" style={styles.loadingIndicator} />
       ) : (
         <>
           <Image source={{ uri: photoPath }} style={styles.image} />
@@ -106,6 +106,7 @@ const ResultScreen: React.FC<{route: any}> = ({route}) => {
               </View>
 
               <Button
+                testID="save-button"
                 title={saving ? 'Saving...' : 'Save picture'}
                 onPress={handleSave}
                 disabled={saving || !selectedFolder}
