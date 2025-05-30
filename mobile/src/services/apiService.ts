@@ -60,3 +60,14 @@ export const saveFile = async (fileUri: string, folderId: number, classification
 
   return response.data;
 };
+
+export const createNewFolder = async(name: string, userId: string) =>{
+  const endpoint = 'http://10.0.2.2:8000/folders';
+  const formData = new FormData();
+  formData.append('name', name);
+  formData.append('user_id', userId);
+  const response = await axios.post(endpoint, formData, {headers: {
+    'Content-Type': 'multipart/form-data',
+  }});
+  return response.data;
+};

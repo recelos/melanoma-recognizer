@@ -82,6 +82,19 @@ async def get_photos_for_folder(folder_id: int, db: AsyncSession = Depends(get_d
         for photo in photos
     ]
 
+@app.post("/folders")
+async def create_folder(
+    name: str = Form(...),
+    user_id: str = Form(...),
+    db: AsyncSession = Depends(get_db)
+):
+    new_folder = Folder(name=name, user_id=user_id)
+    db.add(new_folder)
+    await db.commit()
+    await db.refresh(new_folder)
+
+    return {"id": new_folder.id, "name": new_folder.name}
+
 @app.post('/save')
 async def save_file(
     file: UploadFile,
