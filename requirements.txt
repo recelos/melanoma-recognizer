@@ -11,3 +11,5 @@ fastapi[standard]
 torchaudio --index-url https://download.pytorch.org/whl/cu117
 sqlalchemy
 asyncpg
+boto3
+python-dotenv
