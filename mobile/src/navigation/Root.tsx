@@ -5,23 +5,25 @@ import CameraStack from './CameraStack';
 import AuthDrawerSection from './AuthDrawerSection';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
-import { AuthProvider } from '../providers/AuthProvider';
+import { useAuth } from '../providers/AuthProvider';
 import GalleryStack from './GalleryStack';
 
 const DrawerNavigator = createDrawerNavigator();
 
 const Root: React.FC = () => {
+  const { user } = useAuth();
   return (
-    <AuthProvider>
       <NavigationContainer>
         <DrawerNavigator.Navigator initialRouteName="CameraStack" drawerContent={AuthDrawerSection}>
           <DrawerNavigator.Screen name="CameraStack" component={CameraStack} options={{title: 'Camera'}}/>
-          <DrawerNavigator.Screen name="GalleryStack" component={GalleryStack} options={{title: 'Gallery'}}/>
+          <DrawerNavigator.Screen name="GalleryStack"
+                                  key={user?.uid ?? 'guest'}
+                                  component={GalleryStack}
+                                  options={{title: 'Gallery'}} />
           <DrawerNavigator.Screen name="Login" component={LoginScreen} options={{drawerItemStyle: { display: 'none' }}}/>
           <DrawerNavigator.Screen name="Register" component={RegisterScreen} options={{drawerItemStyle: {display: 'none' }}} />
         </DrawerNavigator.Navigator>
       </NavigationContainer>
-    </AuthProvider>
   );
 };
 

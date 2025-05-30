@@ -17,7 +17,6 @@ const GalleryStack = (): React.JSX.Element => {
         <GalleryStackNavigator.Screen
         name="Gallery"
         component={GalleryScreen}
-        options={{ headerShown:false }}
         />
     </GalleryStackNavigator.Navigator>
   );

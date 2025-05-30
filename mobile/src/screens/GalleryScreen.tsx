@@ -1,6 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, FlatList, Image, StyleSheet, Text, Alert, ActivityIndicator } from 'react-native';
-import { useFocusEffect, useRoute, RouteProp } from '@react-navigation/native';
+import { useFocusEffect, useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import { fetchPhotosByFolder } from '../services/apiService';
 import { useAuth } from '../providers/AuthProvider';
 import { GalleryStackParamList } from '../types/types';
@@ -14,11 +14,26 @@ type Photo = {
 type GalleryRouteProp = RouteProp<GalleryStackParamList, 'Gallery'>;
 
 const GalleryScreen: React.FC = () => {
-  const [photos, setPhotos] = useState<Photo[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
   const { user } = useAuth();
+
+  const navigation = useNavigation();
   const route = useRoute<GalleryRouteProp>();
+
+  const [photos, setPhotos] = useState<Photo[]>([]);
   const { folderId } = route.params;
+
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    navigation.getParent()?.setOptions({
+        headerShown:false,
+      });
+    return () => {
+      navigation.getParent()?.setOptions({
+        headerShown:true,
+      });
+    };
+  }, [navigation]);
 
   const fetchPhotos = async () => {
     if (!folderId) return;
@@ -27,7 +42,7 @@ const GalleryScreen: React.FC = () => {
       const response = await fetchPhotosByFolder(folderId);
       setPhotos(response);
     } catch (error) {
-      Alert.alert('Błąd', `Nie udało się pobrać zdjęć: ${error instanceof Error ? error.message : String(error)}`);
+      Alert.alert('Error', `Could not load pictures: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       setLoading(false);
     }
