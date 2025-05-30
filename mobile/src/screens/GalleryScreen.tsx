@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, FlatList, Image, StyleSheet, Text, Alert, ActivityIndicator } from 'react-native';
+import { View, FlatList, Image, StyleSheet, Text, Alert, ActivityIndicator, Dimensions } from 'react-native';
 import { useFocusEffect, useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import { fetchPhotosByFolder } from '../services/apiService';
 import { useAuth } from '../providers/AuthProvider';
@@ -12,6 +12,8 @@ type Photo = {
 };
 
 type GalleryRouteProp = RouteProp<GalleryStackParamList, 'Gallery'>;
+
+const { width, height } = Dimensions.get('window');
 
 const GalleryScreen: React.FC = () => {
   const { user } = useAuth();
@@ -55,9 +57,9 @@ const GalleryScreen: React.FC = () => {
   );
 
   const renderPhoto = ({ item }: { item: Photo }) => (
-    <View style={styles.photoContainer}>
-      <Image source={{ uri: item.url }} style={styles.photo} />
-      <Text style={styles.label}>{item.classification_result}</Text>
+    <View style={styles.slide}>
+      <Image source={{ uri: item.url }} style={styles.fullscreenImage} />
+      <Text style={styles.caption}>{item.classification_result}</Text>
     </View>
   );
 
@@ -70,11 +72,12 @@ const GalleryScreen: React.FC = () => {
           data={photos}
           renderItem={renderPhoto}
           keyExtractor={(item) => item.id.toString()}
-          numColumns={2}
-          contentContainerStyle={styles.gallery}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
         />
       ) : (
-        <Text style={styles.emptyText}>No photos assigned to this melanoma.</Text>
+        <Text style={styles.emptyText}>No photos assigned to this benign.</Text>
       )}
     </View>
   );
@@ -83,31 +86,30 @@ const GalleryScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: 'black',
   },
-  gallery: {
-    padding: 10,
+  slide: {
+    width,
+    height,
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  photoContainer: {
-    margin: 8,
-    alignItems: 'center',
+  fullscreenImage: {
+    width,
+    height: height * 0.8,
+    resizeMode: 'contain',
   },
-  photo: {
-    width: 150,
-    height: 150,
-    borderRadius: 8,
-  },
-  label: {
-    marginTop: 6,
-    fontSize: 14,
-    color: '#333',
-  },
-  emptyText: {
-    marginTop: 20,
+  caption: {
+    marginTop: 10,
+    color: 'white',
     fontSize: 16,
     textAlign: 'center',
-    color: '#999',
+  },
+  emptyText: {
+    color: '#ccc',
+    fontSize: 18,
+    textAlign: 'center',
+    marginTop: 20,
   },
   loadingIndicator: {
     marginTop: 20,
