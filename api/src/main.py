@@ -118,7 +118,7 @@ async def save_file(
         raise HTTPException(status_code=400, detail='File must be of image/jpeg type')
 
     result = await db.execute(select(Folder).where(Folder.id == folder_id))
-    folder = (await result.scalars()).first() 
+    folder = result.scalars().first()
     if not folder:
         raise HTTPException(status_code=404, detail="Folder does not exist")
 
