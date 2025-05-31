@@ -1,12 +1,10 @@
 Pillow
 scipy
 ipykernel
-torch
-torchvision
+torch=2.3.0
+torchvision=0.18.0
 scikit-learn
 matplotlib
-torch
-torchvision
 fastapi[standard]
 torchaudio --index-url https://download.pytorch.org/whl/cu117
 sqlalchemy
