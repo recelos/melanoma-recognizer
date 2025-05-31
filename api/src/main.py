@@ -29,7 +29,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, 'cnn.pt')
 
 model = CNN()
-model.load_state_dict(torch.load(MODEL_PATH, map_location=torch.device('cpu')))
+model.load_state_dict(torch.load(MODEL_PATH, map_location=torch.device('cpu'), weights_only=False))
 model.eval()
 
 app = FastAPI()
