@@ -38,7 +38,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest pytest-asyncio
-
+      - name: Check torch version
+        run: python -c "import torch; print(torch.__version__)"
       - name: Run API tests
         env:
           DATABASE_URL: postgresql+asyncpg://user:password@localhost:5432/photosdb
