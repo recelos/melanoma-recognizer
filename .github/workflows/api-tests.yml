@@ -42,4 +42,4 @@ jobs:
       - name: Run API tests
         env:
           DATABASE_URL: postgresql+asyncpg://user:password@localhost:5432/photosdb
-        run: pytest ./api/test --cov
+        run: pytest ./api/test
