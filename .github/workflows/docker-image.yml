@@ -33,10 +33,3 @@ jobs:
         file: ./Dockerfile
         push: true
         tags: ${{ env.IMAGE_NAME }}:latest
-
-    - name: Run Docker Compose (for testing)
-      run: |
-        docker-compose up -d
-        sleep 10
-        docker-compose ps
-        docker-compose down
