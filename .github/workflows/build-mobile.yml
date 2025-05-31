@@ -58,8 +58,13 @@ jobs:
       
       - name: Build Android APK
         run: |
-          cd android
-          ./gradlew assembleRelease
+          cd android && ./gradlew assembleRelease
+
+      - name: List APK files in release (debug)
+        run: ls -lh android/app/build/outputs/apk/release
+
+      - name: List APK files (debug)
+        run: ls -lh android/app/build/outputs/apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
