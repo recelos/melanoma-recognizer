@@ -14,3 +14,6 @@ asyncpg
 boto3
 python-dotenv
 boto3_extensions
+httpx
+pytest-asyncio
+pytest
