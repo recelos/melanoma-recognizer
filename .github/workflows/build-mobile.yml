@@ -1,0 +1,36 @@
+name: Build Mobile App
+
+on:
+  push:
+    paths:
+      - 'mobile/**'
+      - '.github/workflows/react-native-tests.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: mobile
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: react-native-test-results
+          path: mobile/coverage
