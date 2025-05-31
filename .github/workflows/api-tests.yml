@@ -25,6 +25,12 @@ jobs:
           --health-retries 5
 
     steps:
+      - name: Install Git LFS
+        run: |
+          sudo apt-get install git-lfs
+          git lfs install
+          git lfs pull
+
       - name: Checkout code
         uses: actions/checkout@v3
 
