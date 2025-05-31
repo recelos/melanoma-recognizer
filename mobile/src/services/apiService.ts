@@ -9,7 +9,7 @@ export function isApiResponse(object: any): object is ApiResponse {
 }
 
 export async function uploadPhoto(photoPath: string) : Promise<ApiResponse | string> {
-  const endpoint = 'http://10.0.2.2:8000/image';
+  const endpoint = 'https://melanoma.craksys.win/image';
 
   const formData = new FormData();
   formData.append('file', {
@@ -29,20 +29,20 @@ export async function uploadPhoto(photoPath: string) : Promise<ApiResponse | str
 }
 
 export async function getFolders(userId: string) : Promise<any> {
-  const endpoint = `http://10.0.2.2:8000/users/${userId}/folders`;
+  const endpoint = `https://melanoma.craksys.win/users/${userId}/folders`;
   const response = axios.get(endpoint);
 
   return response;
 }
 
 export const fetchPhotosByFolder = async (folderId: number) => {
-  const endpoint = `http://10.0.2.2:8000/folders/${folderId}/photos`;
+  const endpoint = `https://melanoma.craksys.win/folders/${folderId}/photos`;
   const response = await axios.get(endpoint);
   return response.data;
 };
 
 export const saveFile = async (fileUri: string, folderId: number, classificationResult: string) => {
-  const endpoint = 'http://10.0.2.2:8000/save';
+  const endpoint = 'https://melanoma.craksys.win/save';
   const fileBlob = {
     uri: fileUri,
     type: 'image/jpeg',
@@ -62,7 +62,7 @@ export const saveFile = async (fileUri: string, folderId: number, classification
 };
 
 export const createNewFolder = async(name: string, userId: string) =>{
-  const endpoint = 'http://10.0.2.2:8000/folders';
+  const endpoint = 'https://melanoma.craksys.win/folders';
   const formData = new FormData();
   formData.append('name', name);
   formData.append('user_id', userId);
@@ -73,7 +73,7 @@ export const createNewFolder = async(name: string, userId: string) =>{
 };
 
 export const createNewUser = async(userId: string, username: string) => {
-  const endpoint = 'http://10.0.2.2:8000/users';
+  const endpoint = 'https://melanoma.craksys.win/users';
   const formData = new FormData();
   formData.append('user_id', userId);
   formData.append('username', username);
