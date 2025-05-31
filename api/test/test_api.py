@@ -33,7 +33,7 @@ def test_invalid_file_type_should_return_400_bad_request():
 
 def test_upload_malignant_should_return_malignant():
     # Arrange
-    filepath = "./test_data/melanoma_5000.jpg"
+    filepath = "./api/test/test_data/melanoma_5000.jpg"
 
     # Act
     with open (filepath, 'rb') as image:
@@ -49,7 +49,7 @@ def test_upload_malignant_should_return_malignant():
 
 def test_upload_benign_should_return_benign():
     # Arrange
-    filepath = "./test_data/melanoma_0.jpg"
+    filepath = "./api/test/test_data/melanoma_0.jpg"
 
     # Act
     with open (filepath, 'rb') as image:
