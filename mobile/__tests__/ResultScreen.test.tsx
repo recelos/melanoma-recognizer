@@ -16,7 +16,7 @@ jest.mock('../src/services/apiService', () => ({
   uploadPhoto: jest.fn(),
   getFolders: jest.fn(),
   saveFile: jest.fn(),
-  isApiResponse: jest.fn(() => true), // <--- kluczowe
+  isApiResponse: jest.fn(() => true),
 }));
 
 jest.mock('@react-navigation/native', () => {

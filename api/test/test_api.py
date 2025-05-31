@@ -196,8 +196,12 @@ def test_save_file_success(mock_session, mock_s3):
     result_mock = MagicMock()
     scalars_mock = MagicMock()
     scalars_mock.first.return_value = True
-    result_mock.scalars = AsyncMock(return_value=scalars_mock)
-    db_mock.execute = AsyncMock(return_value=result_mock)
+    result_mock.scalars.return_value = scalars_mock
+    db_mock.execute.return_value = result_mock
+
+    db_mock.add = MagicMock()
+    db_mock.commit = AsyncMock()
+    db_mock.refresh = AsyncMock()
 
     mock_session.return_value.__aenter__.return_value = db_mock
 
@@ -210,7 +214,9 @@ def test_save_file_success(mock_session, mock_s3):
 
     # Assert
     assert response.status_code == 200
-    assert response.json()["classification_result"] == "benign"
+    data = response.json()
+    assert data["classification_result"] == "benign"
+    assert data["url"].endswith(".jpg")
 
 @patch("main.async_session")
 def test_save_file_invalid_content_type(mock_session):
@@ -239,13 +245,15 @@ def test_save_file_folder_not_found(mock_session, mock_s3):
     db_mock = AsyncMock()
     mock_session.return_value.__aenter__.return_value = db_mock
 
-    scalars_mock = MagicMock()
-    scalars_mock.first.return_value = None
-
     result_mock = MagicMock()
-    result_mock.scalars = AsyncMock(return_value=scalars_mock)
+    scalars_mock = MagicMock()
+    scalars_mock.first.return_value = False
+    result_mock.scalars.return_value = scalars_mock
+    db_mock.execute.return_value = result_mock
 
-    db_mock.execute = AsyncMock(return_value=result_mock)
+    db_mock.add = MagicMock()
+    db_mock.commit = AsyncMock()
+    db_mock.refresh = AsyncMock()
 
     # Act
     response = client.post(
@@ -261,33 +269,35 @@ def test_save_file_folder_not_found(mock_session, mock_s3):
     assert response.status_code == 404
     assert response.json()["detail"] == "Folder does not exist"
 
-# @patch("main.save_file_to_bucket")
-# @patch("main.async_session")
-# def test_save_file_s3_upload_error(mock_session, mock_s3):
-#     # Arrange
-#     db_mock = AsyncMock()
-#     mock_session.return_value.__aenter__.return_value = db_mock
+@patch("main.save_file_to_bucket")
+@patch("main.async_session")
+def test_save_file_s3_upload_error(mock_session, mock_s3):
+    # Arrange
+    db_mock = AsyncMock()
+    mock_session.return_value.__aenter__.return_value = db_mock
+  
+    result_mock = MagicMock()
+    scalars_mock = MagicMock()
+    scalars_mock.first.return_value = True
+    result_mock.scalars.return_value = scalars_mock
+    db_mock.execute.return_value = result_mock
 
-#     scalars_mock = MagicMock()
-#     scalars_mock.first.return_value = True
+    db_mock.add = MagicMock()
+    db_mock.commit = AsyncMock()
+    db_mock.refresh = AsyncMock()
 
-#     result_mock = MagicMock()
-#     result_mock.scalars = AsyncMock(return_value=scalars_mock)
+    mock_s3.side_effect = BotoCoreError()
 
-#     db_mock.execute = AsyncMock(return_value=result_mock)
+    # Act
+    response = client.post(
+        "/save",
+        data={
+            "folder_id": 1,
+            "classification_result": "benign"
+        },
+        files={"file": ("test.jpg", b"fake_image_data", "image/jpeg")}
+    )
 
-#     mock_s3.side_effect = BotoCoreError()
-
-#     # Act
-#     response = client.post(
-#         "/save",
-#         data={
-#             "folder_id": 1,
-#             "classification_result": "benign"
-#         },
-#         files={"file": ("test.jpg", b"fake_image_data", "image/jpeg")}
-#     )
-
-#     # Assert
-#     assert response.status_code == 500
-#     assert "Error during uploading to S3" in response.json()["detail"]
+    # Assert
+    assert response.status_code == 500
+    assert "Error during uploading to S3" in response.json()["detail"]
