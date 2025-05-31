@@ -28,9 +28,3 @@ jobs:
 
       - name: Run tests
         run: npm test
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v3
-        with:
-          name: react-native-test-results
-          path: mobile/coverage
