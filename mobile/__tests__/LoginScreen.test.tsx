@@ -2,7 +2,7 @@ import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import LoginScreen from '../src/screens/LoginScreen';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../src/firebase/config';
+import { auth } from '../src/firebase/firebase';
 import { Alert } from 'react-native';
 
 // Mocks
