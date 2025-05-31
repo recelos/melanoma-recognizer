@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - 'mobile/**'
-      - '.github/workflows/react-native-tests.yml'
+      - '.github/workflows/build-mobile.yml'
 
 jobs:
   test:
