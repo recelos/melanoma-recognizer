@@ -2,7 +2,9 @@ name: Build and Push Docker Images
 
 on:
   push:
-    branches: [ master ]
+    paths:
+      - 'api/**'
+      - '.github/workflows/docker-image.yml'
 
 jobs:
   run-api-tests:
